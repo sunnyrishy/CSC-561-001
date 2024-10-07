@@ -1,0 +1,273 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema SUNNYRISHYVARDHANB
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema SUNNYRISHYVARDHANB
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `SUNNYRISHYVARDHANB` DEFAULT CHARACTER SET utf8 ;
+USE `SUNNYRISHYVARDHANB` ;
+
+-- -----------------------------------------------------
+-- Table `SUNNYRISHYVARDHANB`.`Certificates`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `SUNNYRISHYVARDHANB`.`Certificates` (
+  `Certificate_id` INT NOT NULL,
+  `Certificate_Name` VARCHAR(45) NULL,
+  `Description` VARCHAR(45) NULL,
+  PRIMARY KEY (`Certificate_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `SUNNYRISHYVARDHANB`.`Swim Level`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `SUNNYRISHYVARDHANB`.`Swim Level` (
+  `swim_level_id` INT NOT NULL,
+  `level_name` VARCHAR(45) NULL,
+  `description` VARCHAR(45) NULL,
+  `min_age` INT NULL,
+  `max_age` INT NULL,
+  PRIMARY KEY (`swim_level_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `SUNNYRISHYVARDHANB`.`Classes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `SUNNYRISHYVARDHANB`.`Classes` (
+  `class_id` INT NOT NULL,
+  `class_name` VARCHAR(45) NULL,
+  `Price` INT NULL,
+  `Schedule` VARCHAR(45) NULL,
+  `min_level_to_join` INT NULL,
+  `Swim Level_swim_level_id` INT NOT NULL,
+  PRIMARY KEY (`class_id`),
+  INDEX `fk_Classes_Swim Level1_idx` (`Swim Level_swim_level_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Classes_Swim Level1`
+    FOREIGN KEY (`Swim Level_swim_level_id`)
+    REFERENCES `SUNNYRISHYVARDHANB`.`Swim Level` (`swim_level_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `SUNNYRISHYVARDHANB`.`Instructions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `SUNNYRISHYVARDHANB`.`Instructions` (
+  `instructor_id` INT NOT NULL,
+  `instructor_first_name` VARCHAR(45) NULL,
+  `instructor_last_name` VARCHAR(45) NULL,
+  `Qualifications` VARCHAR(45) NULL,
+  `max_capacity` VARCHAR(45) NULL,
+  PRIMARY KEY (`instructor_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `SUNNYRISHYVARDHANB`.`Class Session`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `SUNNYRISHYVARDHANB`.`Class Session` (
+  `session_id` INT NOT NULL,
+  `class_id` INT NULL,
+  `instructor_id` INT NULL,
+  `Date` DATE NULL,
+  `Time` TIME NULL,
+  `Description` VARCHAR(45) NULL,
+  `Classes_class_id` INT NOT NULL,
+  `Instructions_instructor_id` INT NOT NULL,
+  PRIMARY KEY (`session_id`),
+  INDEX `fk_Class Session_Classes1_idx` (`Classes_class_id` ASC) VISIBLE,
+  INDEX `fk_Class Session_Instructions1_idx` (`Instructions_instructor_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Class Session_Classes1`
+    FOREIGN KEY (`Classes_class_id`)
+    REFERENCES `SUNNYRISHYVARDHANB`.`Classes` (`class_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Class Session_Instructions1`
+    FOREIGN KEY (`Instructions_instructor_id`)
+    REFERENCES `SUNNYRISHYVARDHANB`.`Instructions` (`instructor_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `SUNNYRISHYVARDHANB`.`Students`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `SUNNYRISHYVARDHANB`.`Students` (
+  `student_id` INT NOT NULL,
+  `student_first_name` VARCHAR(45) NULL,
+  `student_last_name` VARCHAR(45) NULL,
+  `student_date_of_birth` DATE NULL,
+  `Address` VARCHAR(45) NULL,
+  `Phone Number` INT NULL,
+  `email_id` VARCHAR(45) NULL,
+  `swim_level_id` INT NULL,
+  `Swim Level_swim_level_id` INT NOT NULL,
+  PRIMARY KEY (`student_id`),
+  INDEX `fk_Students_Swim Level1_idx` (`Swim Level_swim_level_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Students_Swim Level1`
+    FOREIGN KEY (`Swim Level_swim_level_id`)
+    REFERENCES `SUNNYRISHYVARDHANB`.`Swim Level` (`swim_level_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `SUNNYRISHYVARDHANB`.`Enrollments`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `SUNNYRISHYVARDHANB`.`Enrollments` (
+  `enrollment_id` INT NOT NULL,
+  `student_id` INT NULL,
+  `class_session_id` INT NULL,
+  `Status` VARCHAR(45) NULL,
+  `Registration_date` DATE NULL,
+  `Rating` INT NULL,
+  `Feedback` VARCHAR(45) NULL,
+  `class_certificate` VARCHAR(45) NULL,
+  `student_progress_notes` VARCHAR(45) NULL,
+  `Result` VARCHAR(45) NULL,
+  `Class Session_session_id` INT NOT NULL,
+  `Students_student_id` INT NOT NULL,
+  PRIMARY KEY (`enrollment_id`),
+  INDEX `fk_Enrollments_Class Session1_idx` (`Class Session_session_id` ASC) VISIBLE,
+  INDEX `fk_Enrollments_Students1_idx` (`Students_student_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Enrollments_Class Session1`
+    FOREIGN KEY (`Class Session_session_id`)
+    REFERENCES `SUNNYRISHYVARDHANB`.`Class Session` (`session_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Enrollments_Students1`
+    FOREIGN KEY (`Students_student_id`)
+    REFERENCES `SUNNYRISHYVARDHANB`.`Students` (`student_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `SUNNYRISHYVARDHANB`.`Certificates Earned`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `SUNNYRISHYVARDHANB`.`Certificates Earned` (
+  `earned_id` INT NOT NULL,
+  `student_id` INT NULL,
+  `certificate_id` INT NULL,
+  `enrollment_id` INT NULL,
+  `Date` DATE NULL,
+  `Enrollments_enrollment_id` INT NOT NULL,
+  `Certificates_Certificate_id` INT NOT NULL,
+  PRIMARY KEY (`earned_id`),
+  INDEX `fk_Certificates Earned_Enrollments1_idx` (`Enrollments_enrollment_id` ASC) VISIBLE,
+  INDEX `fk_Certificates Earned_Certificates1_idx` (`Certificates_Certificate_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Certificates Earned_Enrollments1`
+    FOREIGN KEY (`Enrollments_enrollment_id`)
+    REFERENCES `SUNNYRISHYVARDHANB`.`Enrollments` (`enrollment_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Certificates Earned_Certificates1`
+    FOREIGN KEY (`Certificates_Certificate_id`)
+    REFERENCES `SUNNYRISHYVARDHANB`.`Certificates` (`Certificate_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `SUNNYRISHYVARDHANB`.`Attendance`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `SUNNYRISHYVARDHANB`.`Attendance` (
+  `attendance_id` INT NOT NULL,
+  `enrollment_id` INT NULL,
+  `session_id` INT NULL,
+  `Date` DATE NULL,
+  `Status` VARCHAR(45) NULL,
+  `Enrollments_enrollment_id` INT NOT NULL,
+  PRIMARY KEY (`attendance_id`),
+  INDEX `fk_Attendance_Enrollments1_idx` (`Enrollments_enrollment_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Attendance_Enrollments1`
+    FOREIGN KEY (`Enrollments_enrollment_id`)
+    REFERENCES `SUNNYRISHYVARDHANB`.`Enrollments` (`enrollment_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `SUNNYRISHYVARDHANB`.`Transactions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `SUNNYRISHYVARDHANB`.`Transactions` (
+  `transaction_id` INT NOT NULL,
+  `amount` INT NULL,
+  `Status` VARCHAR(45) NULL,
+  `Date` DATE NULL,
+  `Reason` VARCHAR(45) NULL,
+  `Type (Payment/Refund/Adjustment)` VARCHAR(45) NULL,
+  `reference_number` INT NULL,
+  `credit_card_number` INT NULL,
+  `credit_card_name` VARCHAR(45) NULL,
+  `exp_month` INT NULL,
+  `exp_year` INT NULL,
+  PRIMARY KEY (`transaction_id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `SUNNYRISHYVARDHANB`.`Payments`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `SUNNYRISHYVARDHANB`.`Payments` (
+  `payment_id` INT NOT NULL,
+  `enrollment_id` INT NULL,
+  `payment_method` VARCHAR(45) NULL,
+  `Amount` INT NULL,
+  `Status` VARCHAR(45) NULL,
+  `Date` DATE NULL,
+  `Enrollments_enrollment_id` INT NOT NULL,
+  `Transactions_transaction_id` INT NOT NULL,
+  PRIMARY KEY (`payment_id`, `Enrollments_enrollment_id`, `Transactions_transaction_id`),
+  INDEX `fk_Payments_Enrollments1_idx` (`Enrollments_enrollment_id` ASC) VISIBLE,
+  INDEX `fk_Payments_Transactions1_idx` (`Transactions_transaction_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Payments_Enrollments1`
+    FOREIGN KEY (`Enrollments_enrollment_id`)
+    REFERENCES `SUNNYRISHYVARDHANB`.`Enrollments` (`enrollment_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Payments_Transactions1`
+    FOREIGN KEY (`Transactions_transaction_id`)
+    REFERENCES `SUNNYRISHYVARDHANB`.`Transactions` (`transaction_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `SUNNYRISHYVARDHANB`.`Refund Process`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `SUNNYRISHYVARDHANB`.`Refund Process` (
+  `refund_id` INT NOT NULL,
+  `transaction_id` INT NULL,
+  `refund_amount` INT NULL,
+  `Date` DATE NULL,
+  `Reason` VARCHAR(45) NULL,
+  `Transactions_transaction_id` INT NOT NULL,
+  PRIMARY KEY (`refund_id`, `Transactions_transaction_id`),
+  INDEX `fk_Refund Process_Transactions1_idx` (`Transactions_transaction_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Refund Process_Transactions1`
+    FOREIGN KEY (`Transactions_transaction_id`)
+    REFERENCES `SUNNYRISHYVARDHANB`.`Transactions` (`transaction_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
